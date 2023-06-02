@@ -22,6 +22,7 @@ public class DepartmentServiceImplemented implements DepartmentService{
                 .filter(it -> it.getDepartment() == departmentID)
                 .min(Comparator.comparing(Employee::getSalary));
     }
+
     @Override
     public Optional<Employee> getEmployeeMaxSalary(Integer departmentID){
         Collection<Employee> employees = employeeService.findAll();

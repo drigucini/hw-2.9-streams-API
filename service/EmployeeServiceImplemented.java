@@ -1,10 +1,14 @@
 package pro.sky.hwstreams.service;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import pro.sky.hwstreams.Employee;
 import pro.sky.hwstreams.Exceptions.EmployeeAlreadyAddedException;
 import pro.sky.hwstreams.Exceptions.EmployeeNotFoundException;
+import pro.sky.hwstreams.Exceptions.InvalidInputException;
 
 import java.util.*;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class EmployeeServiceImplemented implements EmployeeService {
@@ -15,6 +19,7 @@ public class EmployeeServiceImplemented implements EmployeeService {
     }
     @Override
     public Employee addEmployee(String firstname, String lastName, int department, int salary) {
+        validateInput(firstname, lastName);
         Employee employee = new Employee(firstname, lastName, department, salary);
         if (employees.containsKey(employee.getFullName())) {
             throw new EmployeeAlreadyAddedException("Such employee already exists");
@@ -24,6 +29,7 @@ public class EmployeeServiceImplemented implements EmployeeService {
     }
     @Override
     public Employee removeEmployee(String firstname, String lastName) {
+        validateInput(firstname, lastName);
         Employee employee = findEmployee(firstname, lastName);
         if (employees.containsKey(employee.getFullName())) {
             employees.remove(employee.getFullName());
@@ -34,6 +40,7 @@ public class EmployeeServiceImplemented implements EmployeeService {
 
     @Override
     public Employee findEmployee(String firstname, String lastName)  {
+        validateInput(firstname, lastName);
         String key = firstname + lastName;
         if (employees.containsKey(key)) {
             return employees.get(key);
@@ -46,4 +53,9 @@ public class EmployeeServiceImplemented implements EmployeeService {
         return Collections.unmodifiableCollection(employees.values());
     }
 
+    private void validateInput(String firstName, String lastName) {
+        if (!(isAlpha(firstName) && isAlpha(lastName))) {
+            throw new InvalidInputException();
+        }
+    }
 }
